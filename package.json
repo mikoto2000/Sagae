@@ -1,0 +1,25 @@
+{
+  "name": "sagae",
+  "version": "1.0.0",
+  "description": "Yet another SVG editor.",
+  "main": "src/main.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikoto2000/Sagae.git"
+  },
+  "keywords": [
+    "SVG"
+  ],
+  "author": "mikoto2000",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mikoto2000/Sagae/issues"
+  },
+  "homepage": "https://github.com/mikoto2000/Sagae#readme"
+}
