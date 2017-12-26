@@ -9,8 +9,15 @@ window.addEventListener('load', function() {
         let width = svgDom.documentElement.getAttribute("width")
         let height = svgDom.documentElement.getAttribute("height")
 
-        // エレメント挿入
+        // 古い画像があれば削除する
         let target = document.getElementById("svg");
+        let child = target.firstChild
+        while (child) {
+            target.removeChild(child)
+            child = target.firstChild
+        }
+
+        // エレメント挿入
         target.setAttribute("width", width)
         target.setAttribute("height", height)
         target.appendChild(document.importNode(svgDom.documentElement, true));

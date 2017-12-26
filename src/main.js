@@ -6,6 +6,7 @@ const fs = require('fs')
 
 // メインウィンドウはグローバルに持つのが良い
 let mainWindow
+let fileWatcher
 
 // メニュー
 const mainMenuTemplate = [
@@ -14,7 +15,7 @@ const mainMenuTemplate = [
         submenu: [
             {
                 label: 'ファイルを開く',
-                click: () => { onOpenFile() }
+                click: () => { chooseFileAndOpen() }
             }
         ]
     },
@@ -50,6 +51,10 @@ function createWindow() {
     // ウィンドウが閉じたときに、グローバル変数を掃除する
     mainWindow.on('closed', () => {
       mainWindow = null
+      if (fileWatcher) {
+          fileWatcher.close()
+          fileWatcher = null
+      }
     })
 }
 
@@ -71,13 +76,36 @@ app.on('activate', () => {
   }
 })
 
-function onOpenFile() {
+function chooseFileAndOpen() {
+    // ファイル選択ダイアログを開く
     let filePath = dialog.showOpenDialog(['openFile'])[0]
 
+    // ファイルが選択されていなければ何もせず終了
     if (!filePath) {
         return
     }
 
+    // ファイルを開く
+    openFile(filePath)
+
+    // 古い監視設定が存在していたらクローズ
+    if (fileWatcher) {
+        fileWatcher.close()
+    }
+
+    // ファイル監視を開始
+    fileWatcher = fs.watch(filePath, {
+        presistent: false,
+        recursive: false
+    }, (type, filename) => {
+        if (type === 'change') {
+            openFile(filePath)
+        }
+    })
+
+}
+
+function openFile(filePath) {
     let content = fs.readFileSync(filePath);
     mainWindow.webContents.send('changeImage', content)
 }
