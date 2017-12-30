@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const remote = require('electron').remote
 
 window.addEventListener('load', function() {
     ipcRenderer.on('changeImage', function (event, content) {
@@ -21,6 +22,10 @@ window.addEventListener('load', function() {
         target.setAttribute("width", width)
         target.setAttribute("height", height)
         target.appendChild(document.importNode(svgDom.documentElement, true));
+
+        let win = remote.getCurrentWindow()
+        let applicationArea = document.getElementById('application')
+        win.setContentSize(applicationArea.clientWidth, applicationArea.clientHeight)
     });
 });
 
