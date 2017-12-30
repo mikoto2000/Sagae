@@ -1,0 +1,94 @@
+classdiagram Sagae {
+    class Main {
+    ==
+        "- final mainMenuTemplate";
+    ==
+        "+ constructor()";
+        "- onActivate()";
+        "- onWindowClosed()";
+        "- onWindowAllClosed()";
+        "- createWindow()";
+        "- chooseFileAndOpen()";
+        "- openFile(filePath : string)";
+        "+ static main()";
+    }
+
+    class Sagae {
+    ==
+        "- commandStack : CommandStack";
+    ==
+        "+ constructor()";
+        "+ getRootElement(): Svg";
+        "+ querySelector(selectors: string): SvgElement";
+        "+ querySelectorAll(selectors: string): SvgElement";
+        "+ pushCommand(command: Command)";
+        "+ undo()";
+        "+ redo()";
+    }
+
+    class CommandStack {
+    ==
+    ==
+        "+ push(command : Command)";
+        "+ pop() : Command";
+    }
+
+    class Command {
+        stereotype: interface;
+    ==
+    ==
+        "+ do()";
+        "+ undo()";
+    }
+
+    class AddSvgElementCommand {
+    ==
+        "- parentSvgElement: SvgElement";
+        "- addedSvgElement: SvgElement";
+    ==
+        "+ constructor(addElement: SvgElement, referenceElement: Container)";
+        "+ do()";
+        "+ undo()";
+    }
+
+    class SvgElement {
+        stereotype: abstract;
+    ==
+    ==
+    }
+
+    class Container {
+    ==
+    ==
+    }
+
+    class Primitive {
+    ==
+    ==
+    }
+
+    class Svg {
+    ==
+    ==
+    }
+
+    class Rect {
+    ==
+    ==
+    }
+
+    Main -> Sagae;
+    Main -> Rect;
+    Main -> AddSvgElementCommand;
+    Sagae -> CommandStack;
+    Sagae -> SvgElement;
+    CommandStack -> Command;
+    AddSvgElementCommand .|> Command;
+    AddSvgElementCommand -> SvgElement;
+    AddSvgElementCommand -> Container;
+
+    Primitive -|> SvgElement;
+    Rect -|> Primitive;
+    Container -|> SvgElement;
+    Svg -|> Container;
+}

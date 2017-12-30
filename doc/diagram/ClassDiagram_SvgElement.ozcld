@@ -1,0 +1,73 @@
+classdiagram Sagae {
+    class SvgElement {
+        stereotype: abstract;
+    ==
+        "- element: SVGElement";
+    ==
+    }
+
+    class Container {
+        stereotype: abstract;
+    ==
+        "- children: Primitive[]";
+    ==
+        "+ getChildren(): Primitive[]";
+        "+ add(primitive: Primitive)";
+        "+ remove(primitive: Primitive)";
+        "+ insertBefor(insertPrimitive: Primitive, referencePrimitive: Primitive)";
+    }
+
+    class Svg {
+    ==
+    ==
+    }
+
+    class Group {
+    ==
+    ==
+    }
+
+    class Primitive {
+        stereotype: abstract;
+    ==
+    ==
+    }
+
+    class Rect {
+    ==
+    ==
+        "+ constructor(width: Number, height: Number, strokeType: StrokeType, strokeWidth: Number, strokeColor: Color, fillColor: Color)";
+    }
+
+    class Ellipse {
+    ==
+    ==
+    }
+
+    class Polygon {
+    ==
+    ==
+    }
+
+    class Line {
+    ==
+    ==
+    }
+
+    class CubicCurve {
+    ==
+    ==
+    }
+
+    Container -|> SvgElement;
+    Container -> Primitive;
+    Svg -|> Container;
+    Group -|> Container;
+    Primitive -|> SvgElement;
+    Rect -|> Primitive;
+    Ellipse -|> Primitive;
+    Polygon -|> Primitive;
+    Line -|> Primitive;
+    CubicCurve -|> Primitive;
+}
+
