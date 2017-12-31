@@ -36,11 +36,20 @@ const mainMenuTemplate = [
     }
 ]
 
+// パッケージ化したアプリのために、ダミーの引数を挿入する
+if (!process.defaultApp) {
+    process.argv.splice(1, 0, ".")
+}
+
 // コマンドライン引数解析
 program.version('1.0.0')
     .usage('[options] FILE')
     .parse(process.argv)
-let firstOpenFilePath = path.resolve(program.args[0])
+
+let firstOpenFilePath
+if (program.args[0]) {
+    firstOpenFilePath = path.resolve(program.args[0])
+}
 
 // 引数の数判定
 if (program.args.length > 1) {
@@ -75,9 +84,11 @@ function createWindow() {
       }
     })
 
-    mainWindow.on('show', () => {
+    mainWindow.once('show', () => {
         console.log('start openFile:' + firstOpenFilePath)
-        openAndWatch(firstOpenFilePath)
+        if (firstOpenFilePath) {
+            openAndWatch(firstOpenFilePath)
+        }
     })
 
     mainWindow.once('ready-to-show', () => {
