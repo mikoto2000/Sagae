@@ -3,6 +3,7 @@ const {app, dialog, Menu, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const program = require('commander')
 
 // メインウィンドウはグローバルに持つのが良い
 let mainWindow
@@ -15,7 +16,7 @@ const mainMenuTemplate = [
         submenu: [
             {
                 label: 'ファイルを開く',
-                click: () => { chooseFileAndOpen() }
+                click: () => { chooseFileAndOpenAndWatch() }
             }
         ]
     },
@@ -35,9 +36,26 @@ const mainMenuTemplate = [
     }
 ]
 
+// コマンドライン引数解析
+program.version('1.0.0')
+    .usage('[options] FILE')
+    .parse(process.argv)
+let firstOpenFilePath = path.resolve(program.args[0])
+
+// 引数の数判定
+if (program.args.length > 1) {
+    program.outputHelp(printUsageAndExit)
+}
+
+// Usage を出力して終了
+function printUsageAndExit(usage) {
+    console.log(usage)
+    process.exit(1)
+}
+
 function createWindow() {
     // メインウィンドウ作成
-    mainWindow = new BrowserWindow()
+    mainWindow = new BrowserWindow({show: false})
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate)
     Menu.setApplicationMenu(mainMenu)
 
@@ -55,6 +73,15 @@ function createWindow() {
           fileWatcher.close()
           fileWatcher = null
       }
+    })
+
+    mainWindow.on('show', () => {
+        console.log('start openFile:' + firstOpenFilePath)
+        openAndWatch(firstOpenFilePath)
+    })
+
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show()
     })
 }
 
@@ -76,7 +103,7 @@ app.on('activate', () => {
   }
 })
 
-function chooseFileAndOpen() {
+function chooseFileAndOpenAndWatch() {
     // ファイル選択ダイアログを開く
     let filePath = dialog.showOpenDialog(['openFile'])[0]
 
@@ -85,6 +112,10 @@ function chooseFileAndOpen() {
         return
     }
 
+    openAndWatch(filePath)
+}
+
+function openAndWatch(filePath) {
     // ファイルを開く
     openFile(filePath)
 
@@ -102,7 +133,6 @@ function chooseFileAndOpen() {
             openFile(filePath)
         }
     })
-
 }
 
 function openFile(filePath) {
