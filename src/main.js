@@ -8,6 +8,7 @@ const program = require('commander')
 // メインウィンドウはグローバルに持つのが良い
 let mainWindow
 let fileWatcher
+let licenseWindow
 
 // メニュー
 const mainMenuTemplate = [
@@ -29,6 +30,10 @@ const mainMenuTemplate = [
                 click: () => mainWindow.webContents.openDevTools({mode: 'detach'}),
             }
         ]
+    },
+    {
+        label: 'ライセンス',
+        click: () => { createLicenseWindow() }
     },
     {
         label: '終了',
@@ -62,7 +67,7 @@ function printUsageAndExit(usage) {
     process.exit(1)
 }
 
-function createWindow() {
+function createMainWindow() {
     // メインウィンドウ作成
     mainWindow = new BrowserWindow({show: false})
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate)
@@ -96,7 +101,7 @@ function createWindow() {
     })
 }
 
-app.on('ready', createWindow)
+app.on('ready', createMainWindow)
 
 // すべてのウィンドウが閉じたらアプリケーションを終了する
 // darwin は例外(Dock に常駐するからアプリを終了する必要がない？？？
@@ -110,7 +115,7 @@ app.on('window-all-closed', () => {
 // (詳細不明、QuickStart に入ってたからとりあえず入れている感じ)
 app.on('activate', () => {
   if (mainWindow === null) {
-    createWindow()
+    createMainWindow()
   }
 })
 
@@ -151,3 +156,21 @@ function openFile(filePath) {
     mainWindow.webContents.send('changeImage', content)
 }
 
+function createLicenseWindow() {
+    // ライセンスウィンドウ作成
+    licensesWindow = new BrowserWindow()
+    const licensesMenu = Menu.buildFromTemplate([])
+    licensesWindow.setMenu(null)
+
+    // licenses.html ロード
+    licensesWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'licenses.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+
+    // ウィンドウが閉じたときに、グローバル変数を掃除する
+    licensesWindow.on('closed', () => {
+      licensesWindow = null
+    })
+}
