@@ -125,7 +125,10 @@ app.on('activate', () => {
 
 function chooseFileAndOpenAndWatch() {
     // ファイル選択ダイアログを開く
-    let filePath = dialog.showOpenDialog(['openFile'])[0]
+    let filePath = dialog.showOpenDialog({
+            properties: ['openFile'],
+            filters: [{name: 'SVG Image', extensions: ['svg']}]
+    })[0]
 
     // ファイルが選択されていなければ何もせず終了
     if (!filePath) {
