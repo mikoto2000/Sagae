@@ -89,9 +89,14 @@ function createMainWindow() {
       }
     })
 
+    // 引数で指定されたファイルが開けるならそれを開く
     mainWindow.once('show', () => {
-        if (firstOpenFilePath) {
+        try {
+            fs.access(firstOpenFilePath, fs.constants.R_OK)
             openAndWatch(firstOpenFilePath)
+        } catch (err){
+            let message = firstOpenFilePath + " は存在しません。"
+            mainWindow.webContents.send('changeMessage', message)
         }
     })
 

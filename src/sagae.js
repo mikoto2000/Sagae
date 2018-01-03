@@ -3,6 +3,10 @@ const remote = require('electron').remote
 
 window.addEventListener('load', function() {
     ipcRenderer.on('changeImage', function (event, content) {
+
+        // メッセージリセット
+        setMessage("")
+
         // content をパース
         let svgDom = new DOMParser().parseFromString(content, 'application/xml');
 
@@ -27,5 +31,14 @@ window.addEventListener('load', function() {
         let applicationArea = document.getElementById('application')
         win.setContentSize(applicationArea.clientWidth, applicationArea.clientHeight)
     });
+
+    ipcRenderer.on('changeMessage', function (event, message) {
+        setMessage(message)
+    });
 });
 
+function setMessage(message) {
+    // メッセージを更新
+    let target = document.getElementById("message");
+    target.textContent = message
+}
