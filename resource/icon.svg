@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+<!-- 背景を見やすくするための灰色 rect -->
+<!--
+<rect
+    x="0px"
+    y="0px"
+    width="256px"
+    height="256px"
+    fill="gray"
+    />
+-->
+
+<!-- アイコン本体 -->
+<g>
+    <!-- 輪郭 -->
+    <circle
+        cx="128"
+        cy="128"
+        r="128"
+        fill="white"
+        />
+
+    <clipPath id="bgClip">
+        <circle
+            cx="128"
+            cy="128"
+            r="122"
+            />
+    </clipPath>
+
+    <g clip-path="url(#bgClip)">
+    <rect
+        x="0"
+        y="0"
+        width="256"
+        height="256"
+        fill="yellow"
+        />
+
+    <path
+        d="M 85 0 180 0 256 256 0 256"
+        fill="blue"
+        />
+    </g>
+
+    <!-- S 字 -->
+    <g>
+        <g transform="translate(128, 128)">
+            <path
+                d="M 80 -33
+                   A 95 128 0 0 0 -80 -33
+                   L 80 33
+                   A 95 128 0 0 1 -80 33"
+                fill="none"
+                stroke="black"
+                stroke-linecap="square"
+                stroke-width="50px"
+                />
+            <path
+                d="M 80 -33
+                   A 95 128 0 0 0 -80 -33
+                   L 80 33
+                   A 95 128 0 0 1 -80 33"
+                fill="none"
+                stroke="rgb(200, 255, 200)"
+                stroke-linecap="square"
+                stroke-width="35px"
+                />
+        </g>
+    </g>
+</g>
+</svg>
+
