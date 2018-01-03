@@ -28,7 +28,7 @@ Build:
 License:
 --------
 
-Copyright (C) 2017 mikoto2000
+Copyright (C) 2018 mikoto2000
 
 This software is released under the MIT License, see LICENSE
 
