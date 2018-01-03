@@ -90,7 +90,6 @@ function createMainWindow() {
     })
 
     mainWindow.once('show', () => {
-        console.log('start openFile:' + firstOpenFilePath)
         if (firstOpenFilePath) {
             openAndWatch(firstOpenFilePath)
         }
