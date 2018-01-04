@@ -91,6 +91,11 @@ function createMainWindow() {
 
     // 引数で指定されたファイルが開けるならそれを開く
     mainWindow.once('show', () => {
+        // 引数でのファイル指定が無ければ何もしない
+        if (!firstOpenFilePath) {
+            return
+        }
+
         try {
             fs.access(firstOpenFilePath, fs.constants.R_OK)
             openAndWatch(firstOpenFilePath)
