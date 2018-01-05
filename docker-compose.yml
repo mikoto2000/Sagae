@@ -6,4 +6,10 @@ services:
         volumes:
             - .:/work
         working_dir: /work
+    typescript:
+        build: .
+        image: mikoto2000/typescript
+        volumes:
+            - .:/work
+        working_dir: /work
 

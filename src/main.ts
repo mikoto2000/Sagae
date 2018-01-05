@@ -100,6 +100,7 @@ function createMainWindow() {
             fs.accessSync(firstOpenFilePath, fs.constants.R_OK)
             openAndWatch(firstOpenFilePath)
         } catch (err){
+            console.log(err)
             let message = firstOpenFilePath + " は存在しません。"
             mainWindow.webContents.send('changeMessage', message)
         }

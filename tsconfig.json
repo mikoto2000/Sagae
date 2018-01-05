@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ES3",
+        "noImplicitAny": false,
+        "experimentalDecorators": false,
+        "sourceMap": false,
+        "declaration": false,
+        "noEmitOnError": false,
+    },
+    "files": [
+        "./src/main.ts",
+        "./src/sagae.ts",
+        "./node_modules/electron/electron.d.ts"
+    ]
+}

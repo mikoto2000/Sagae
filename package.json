@@ -24,5 +24,8 @@
   "homepage": "https://github.com/mikoto2000/Sagae#readme",
   "dependencies": {
     "commander": "^2.12.2"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10"
   }
 }
