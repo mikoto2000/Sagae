@@ -97,7 +97,7 @@ function createMainWindow() {
         }
 
         try {
-            fs.access(firstOpenFilePath, fs.constants.R_OK)
+            fs.accessSync(firstOpenFilePath, fs.constants.R_OK)
             openAndWatch(firstOpenFilePath)
         } catch (err){
             let message = firstOpenFilePath + " は存在しません。"
