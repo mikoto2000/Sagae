@@ -8,7 +8,7 @@ const program = require('commander')
 // メインウィンドウはグローバルに持つのが良い
 let mainWindow
 let fileWatcher
-let licenseWindow
+let licensesWindow
 
 // メニュー
 const mainMenuTemplate = [
@@ -33,7 +33,7 @@ const mainMenuTemplate = [
     },
     {
         label: 'ライセンス',
-        click: () => { createLicenseWindow() }
+        click: () => { createLicensesWindow() }
     },
     {
         label: '終了',
@@ -168,7 +168,7 @@ function openFile(filePath) {
     mainWindow.webContents.send('changeImage', content)
 }
 
-function createLicenseWindow() {
+function createLicensesWindow() {
     // ライセンスウィンドウ作成
     licensesWindow = new BrowserWindow()
     const licensesMenu = Menu.buildFromTemplate([])
