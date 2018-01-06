@@ -15,7 +15,9 @@
     "clean": "npm-run-all clean:build clean:package",
     "clean:build": "docker-compose run --rm typescript bash -c \"rm -rf src/**/*.js\" & exit 0",
     "clean:package": "docker-compose run --rm electron rm -rf dist sagae-win32-x64 sagae-win32-x64.zip & exit 0",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:arg": "electron . ./resource/icon.svg"
   },
   "repository": {
     "type": "git",
