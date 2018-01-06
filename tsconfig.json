@@ -9,8 +9,8 @@
         "noEmitOnError": false,
     },
     "files": [
-        "./src/main.ts",
-        "./src/sagae.ts",
+        "./src/main/main.ts",
+        "./src/renderer/sagae.ts",
         "./node_modules/electron/electron.d.ts"
     ]
 }

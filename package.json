@@ -2,7 +2,7 @@
   "name": "sagae",
   "version": "1.0.0",
   "description": "Yet another SVG editor.",
-  "main": "src/main.js",
+  "main": "src/main/main.js",
   "directories": {
     "doc": "doc"
   },
