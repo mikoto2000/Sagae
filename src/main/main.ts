@@ -25,6 +25,24 @@ class Main {
         if (program.args.length > 1) {
             program.outputHelp(printUsageAndExit)
         }
+
+        app.on('ready', createMainWindow)
+
+        // すべてのウィンドウが閉じたらアプリケーションを終了する
+        // darwin は例外(Dock に常駐するからアプリを終了する必要がない？？？
+        app.on('window-all-closed', () => {
+          if (process.platform !== 'darwin') {
+            app.quit()
+          }
+        })
+
+        // アクティブ化されたときにウィンドウを作る
+        // (詳細不明、QuickStart に入ってたからとりあえず入れている感じ)
+        app.on('activate', () => {
+          if (mainWindow === null) {
+            createMainWindow()
+          }
+        })
     }
 }
 
@@ -114,24 +132,6 @@ function createMainWindow() {
         mainWindow.show()
     })
 }
-
-app.on('ready', createMainWindow)
-
-// すべてのウィンドウが閉じたらアプリケーションを終了する
-// darwin は例外(Dock に常駐するからアプリを終了する必要がない？？？
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-// アクティブ化されたときにウィンドウを作る
-// (詳細不明、QuickStart に入ってたからとりあえず入れている感じ)
-app.on('activate', () => {
-  if (mainWindow === null) {
-    createMainWindow()
-  }
-})
 
 function chooseFileAndOpenAndWatch() {
     // ファイル選択ダイアログを開く
