@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
         "module": "CommonJS",
-        "target": "ES3",
+        "lib": ["ES2017", "dom"],
+        "target": "ES2017",
         "noImplicitAny": true,
-        "experimentalDecorators": false,
+        "experimentalDecorators": true,
         "sourceMap": false,
         "declaration": false,
         "noEmitOnError": false,
