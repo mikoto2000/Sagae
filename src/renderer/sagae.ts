@@ -1,3 +1,8 @@
+// SVGElement#getBBox が公開されていないようなので独自定義
+declare interface SVGElement {
+    getBBox(): SVGRect
+}
+
 const {ipcRenderer} = require('electron')
 const remote = require('electron').remote
 
@@ -10,26 +15,36 @@ window.addEventListener('load', function() {
         // content をパース
         let svgDom = new DOMParser().parseFromString(content, 'application/xml');
 
-        // SVG のサイズ取得
-        let width = svgDom.documentElement.getAttribute("width")
-        let height = svgDom.documentElement.getAttribute("height")
-
         // 古い画像があれば削除する
-        let target = document.getElementById("svg");
-        let child = target.firstChild
+        let target: HTMLElement = document.getElementById("svg") as HTMLElement
+        let child: Node | null = target.firstChild
         while (child) {
             target.removeChild(child)
             child = target.firstChild
         }
 
         // エレメント挿入
-        target.setAttribute("width", width)
-        target.setAttribute("height", height)
         target.appendChild(document.importNode(svgDom.documentElement, true));
 
+        // SVG のサイズ取得
+        let bbox = (target.firstChild as SVGElement).getBBox()
+        let width: number | null = bbox.width
+        let height: number | null = bbox.height
+
+        if (width) {
+            target.setAttribute("width", width.toString(10))
+        }
+
+        if (height) {
+            target.setAttribute("height", height.toString(10))
+        }
+
         let win = remote.getCurrentWindow()
-        let applicationArea = document.getElementById('application')
-        win.setContentSize(applicationArea.clientWidth, applicationArea.clientHeight)
+
+        if (win) {
+            let applicationArea: HTMLElement = document.getElementById('application') as HTMLElement
+            win.setContentSize(applicationArea.clientWidth, applicationArea.clientHeight)
+        }
     });
 
     ipcRenderer.on('changeMessage', function (event: string, message: string) {
@@ -39,6 +54,6 @@ window.addEventListener('load', function() {
 
 function setMessage(message: string) {
     // メッセージを更新
-    let target = document.getElementById("message");
+    let target: HTMLElement = document.getElementById("message") as HTMLElement;
     target.textContent = message
 }

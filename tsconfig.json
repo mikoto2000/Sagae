@@ -8,6 +8,8 @@
         "sourceMap": false,
         "declaration": false,
         "noEmitOnError": false,
+        "alwaysStrict": true,
+        "strict": true,
     },
     "files": [
         "./src/main/main.ts",

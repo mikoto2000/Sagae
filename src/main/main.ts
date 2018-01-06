@@ -15,9 +15,9 @@ const program = require('commander')
 class Main {
 
     private mainWindow: BrowserWindow
-    private fileWatcher: FSWatcher
-    private licensesWindow: BrowserWindow
-    private firstOpenFilePath: string
+    private fileWatcher?: FSWatcher | null
+    private licensesWindow?: BrowserWindow | null
+    private firstOpenFilePath?: string
 
     public constructor(firstOpenFilePath: string) {
 
@@ -40,9 +40,7 @@ class Main {
     }
 
     public openDevToolInMainWindow() {
-        if (this.mainWindow) {
-            this.mainWindow.webContents.openDevTools({mode: 'detach'})
-        }
+        this.mainWindow.webContents.openDevTools({mode: 'detach'})
     }
 
     private createMainWindow() {
@@ -70,14 +68,11 @@ class Main {
     }
 
     private onActivate() {
-        if (this.mainWindow === null) {
-            this.createMainWindow()
-        }
+        this.mainWindow.show()
     }
 
     // メインウィンドウが閉じられた時の処理
     private onMainWindowClose() {
-        this.mainWindow = null
         if (this.fileWatcher) {
             this.fileWatcher.close()
             this.fileWatcher = null
@@ -157,8 +152,9 @@ class Main {
         }))
 
         // ウィンドウが閉じたときに、グローバル変数を掃除する
+        let _this = this
         this.licensesWindow.on('closed', function() {
-          this.licensesWindow = null
+          _this.licensesWindow = null
         })
     }
 
