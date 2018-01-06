@@ -6,6 +6,27 @@ const fs = require('fs')
 const program = require('commander')
 
 class Main {
+
+    public constructor() {
+        app.on('ready', createMainWindow)
+
+        // すべてのウィンドウが閉じたらアプリケーションを終了する
+        // darwin は例外(Dock に常駐するからアプリを終了する必要がない？？？
+        app.on('window-all-closed', () => {
+          if (process.platform !== 'darwin') {
+            app.quit()
+          }
+        })
+
+        // アクティブ化されたときにウィンドウを作る
+        // (詳細不明、QuickStart に入ってたからとりあえず入れている感じ)
+        app.on('activate', () => {
+          if (mainWindow === null) {
+            createMainWindow()
+          }
+        })
+    }
+
     public static main() {
         // パッケージ化したアプリのために、ダミーの引数を挿入する
         if (!process.defaultApp) {
@@ -26,23 +47,7 @@ class Main {
             program.outputHelp(Main.printUsageAndExit)
         }
 
-        app.on('ready', createMainWindow)
-
-        // すべてのウィンドウが閉じたらアプリケーションを終了する
-        // darwin は例外(Dock に常駐するからアプリを終了する必要がない？？？
-        app.on('window-all-closed', () => {
-          if (process.platform !== 'darwin') {
-            app.quit()
-          }
-        })
-
-        // アクティブ化されたときにウィンドウを作る
-        // (詳細不明、QuickStart に入ってたからとりあえず入れている感じ)
-        app.on('activate', () => {
-          if (mainWindow === null) {
-            createMainWindow()
-          }
-        })
+        let sagae = new Main()
     }
 
     // Usage を出力して終了
