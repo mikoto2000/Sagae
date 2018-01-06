@@ -23,7 +23,7 @@ class Main {
 
         // 引数の数判定
         if (program.args.length > 1) {
-            program.outputHelp(printUsageAndExit)
+            program.outputHelp(Main.printUsageAndExit)
         }
 
         app.on('ready', createMainWindow)
@@ -43,6 +43,12 @@ class Main {
             createMainWindow()
           }
         })
+    }
+
+    // Usage を出力して終了
+    private static printUsageAndExit(usage) {
+        console.log(usage)
+        process.exit(1)
     }
 }
 
@@ -82,12 +88,6 @@ const mainMenuTemplate = [
         role: 'quit'
     }
 ]
-
-// Usage を出力して終了
-function printUsageAndExit(usage) {
-    console.log(usage)
-    process.exit(1)
-}
 
 function createMainWindow() {
     // メインウィンドウ作成
