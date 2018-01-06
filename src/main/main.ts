@@ -7,8 +7,17 @@ const program = require('commander')
 
 class Main {
 
-    public constructor() {
-        app.on('ready', createMainWindow)
+    private mainWindow
+    private fileWatcher
+    private licensesWindow
+    private firstOpenFilePath
+
+    public constructor(firstOpenFilePath) {
+
+        this.firstOpenFilePath = firstOpenFilePath
+
+        let _this = this
+        app.on('ready', function() { _this.createMainWindow() })
 
         // すべてのウィンドウが閉じたらアプリケーションを終了する
         // darwin は例外(Dock に常駐するからアプリを終了する必要がない？？？
@@ -20,10 +29,128 @@ class Main {
 
         // アクティブ化されたときにウィンドウを作る
         // (詳細不明、QuickStart に入ってたからとりあえず入れている感じ)
-        app.on('activate', () => {
-          if (mainWindow === null) {
-            createMainWindow()
-          }
+        app.on('activate', function() { _this.onActivate() })
+    }
+
+    public openDevToolInMainWindow() {
+        if (this.mainWindow) {
+            this.mainWindow.webContents.openDevTools({mode: 'detach'})
+        }
+    }
+
+    private createMainWindow() {
+        // メインウィンドウ作成
+        this.mainWindow = new BrowserWindow({show: false})
+
+        // index.html ロード
+        this.mainWindow.loadURL(url.format({
+          pathname: path.join(__dirname, '..', 'renderer', 'index.html'),
+          protocol: 'file:',
+          slashes: true
+        }))
+
+        let _this = this
+
+        // ウィンドウが閉じたときに、グローバル変数を掃除する
+        this.mainWindow.on('closed', function() { _this.onMainWindowClose() })
+
+        // 引数で指定されたファイルが開けるならそれを開く
+        this.mainWindow.once('show', function() { _this.openArgFile() })
+
+        this.mainWindow.once('ready-to-show', function() {
+            _this.mainWindow.show()
+        })
+    }
+
+    private onActivate() {
+        if (this.mainWindow === null) {
+            this.createMainWindow()
+        }
+    }
+
+    // メインウィンドウが閉じられた時の処理
+    private onMainWindowClose() {
+        this.mainWindow = null
+        if (this.fileWatcher) {
+            this.fileWatcher.close()
+            this.fileWatcher = null
+        }
+    }
+
+    // 引数から渡されたパスのファイルを開く
+    private openArgFile() {
+
+        // 引数でのファイル指定が無ければ何もしない
+        if (!this.firstOpenFilePath) {
+            return
+        }
+
+        try {
+            fs.accessSync(this.firstOpenFilePath, fs.constants.R_OK)
+            this.openAndWatch(this.firstOpenFilePath)
+        } catch (err){
+            console.log(err)
+            let message = this.firstOpenFilePath + " は存在しません。"
+            this.mainWindow.webContents.send('changeMessage', message)
+        }
+    }
+
+    private chooseFileAndOpenAndWatch() {
+        // ファイル選択ダイアログを開く
+        let filePath = dialog.showOpenDialog({
+                properties: ['openFile'],
+                filters: [{name: 'SVG Image', extensions: ['svg']}]
+        })[0]
+
+        // ファイルが選択されていなければ何もせず終了
+        if (!filePath) {
+            return
+        }
+
+        this.openAndWatch(filePath)
+    }
+
+    private openAndWatch(filePath) {
+        // ファイルを開く
+        this.openFile(filePath)
+
+        // 古い監視設定が存在していたらクローズ
+        if (this.fileWatcher) {
+            this.fileWatcher.close()
+        }
+
+        // ファイル監視を開始
+        this.fileWatcher = fs.watch(filePath, {
+            presistent: false,
+            recursive: false
+        }, (type, filename) => {
+            if (type === 'change') {
+                this.openFile(filePath)
+            }
+        })
+    }
+
+    private openFile(filePath) {
+        let content = fs.readFileSync(filePath);
+        this.mainWindow.webContents.send('changeImage', content)
+    }
+
+    public createLicensesWindow() {
+        // ライセンスウィンドウ作成
+        this.licensesWindow = new BrowserWindow()
+        const licensesMenu = Menu.buildFromTemplate([])
+        this.licensesWindow.setMenu(null)
+
+        // licenses.html ロード
+        this.licensesWindow.loadURL(url.format({
+          pathname: path.join(__dirname, '..', 'renderer', 'licenses.html'),
+          protocol: 'file:',
+          slashes: true
+        }))
+
+        // ウィンドウが閉じたときに、グローバル変数を掃除する
+        this.licensesWindow.on('closed', function() {
+          this.licensesWindow = null
         })
     }
 
@@ -38,6 +165,7 @@ class Main {
             .usage('[options] FILE')
             .parse(process.argv)
 
+        let firstOpenFilePath
         if (program.args[0]) {
             firstOpenFilePath = path.resolve(program.args[0])
         }
@@ -47,7 +175,42 @@ class Main {
             program.outputHelp(Main.printUsageAndExit)
         }
 
-        let sagae = new Main()
+        let sagae = new Main(firstOpenFilePath)
+
+        // メニュー
+        const mainMenuTemplate = [
+            {
+                label: 'ファイル',
+                submenu: [
+                    {
+                        label: 'ファイルを開く',
+                        click: function() { sagae.chooseFileAndOpenAndWatch() }
+                    }
+                ]
+            },
+            {
+                label: '表示',
+                submenu: [
+                    {
+                        label: 'メインウィンドウで開発者ツールを開く',
+                        accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                        click: function() { sagae.openDevToolInMainWindow() },
+                    }
+                ]
+            },
+            {
+                label: 'ライセンス',
+                click: function() { sagae.createLicensesWindow() }
+            },
+            {
+                label: '終了',
+                role: 'quit'
+            }
+        ]
+
+        // アプリケーションメニュー設定
+        const mainMenu = Menu.buildFromTemplate(mainMenuTemplate)
+        Menu.setApplicationMenu(mainMenu)
     }
 
     // Usage を出力して終了
@@ -55,146 +218,6 @@ class Main {
         console.log(usage)
         process.exit(1)
     }
-}
-
-// メインウィンドウはグローバルに持つのが良い
-let mainWindow
-let fileWatcher
-let licensesWindow
-let firstOpenFilePath
-
-// メニュー
-const mainMenuTemplate = [
-    {
-        label: 'ファイル',
-        submenu: [
-            {
-                label: 'ファイルを開く',
-                click: () => { chooseFileAndOpenAndWatch() }
-            }
-        ]
-    },
-    {
-        label: '表示',
-        submenu: [
-            {
-                label: '開発者ツールを開く',
-                accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-                click: () => mainWindow.webContents.openDevTools({mode: 'detach'}),
-            }
-        ]
-    },
-    {
-        label: 'ライセンス',
-        click: () => { createLicensesWindow() }
-    },
-    {
-        label: '終了',
-        role: 'quit'
-    }
-]
-
-function createMainWindow() {
-    // メインウィンドウ作成
-    mainWindow = new BrowserWindow({show: false})
-    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate)
-    Menu.setApplicationMenu(mainMenu)
-
-    // index.html ロード
-    mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, '..', 'renderer', 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    }))
-
-    // ウィンドウが閉じたときに、グローバル変数を掃除する
-    mainWindow.on('closed', () => {
-      mainWindow = null
-      if (fileWatcher) {
-          fileWatcher.close()
-          fileWatcher = null
-      }
-    })
-
-    // 引数で指定されたファイルが開けるならそれを開く
-    mainWindow.once('show', () => {
-        // 引数でのファイル指定が無ければ何もしない
-        if (!firstOpenFilePath) {
-            return
-        }
-
-        try {
-            fs.accessSync(firstOpenFilePath, fs.constants.R_OK)
-            openAndWatch(firstOpenFilePath)
-        } catch (err){
-            console.log(err)
-            let message = firstOpenFilePath + " は存在しません。"
-            mainWindow.webContents.send('changeMessage', message)
-        }
-    })
-
-    mainWindow.once('ready-to-show', () => {
-        mainWindow.show()
-    })
-}
-
-function chooseFileAndOpenAndWatch() {
-    // ファイル選択ダイアログを開く
-    let filePath = dialog.showOpenDialog({
-            properties: ['openFile'],
-            filters: [{name: 'SVG Image', extensions: ['svg']}]
-    })[0]
-
-    // ファイルが選択されていなければ何もせず終了
-    if (!filePath) {
-        return
-    }
-
-    openAndWatch(filePath)
-}
-
-function openAndWatch(filePath) {
-    // ファイルを開く
-    openFile(filePath)
-
-    // 古い監視設定が存在していたらクローズ
-    if (fileWatcher) {
-        fileWatcher.close()
-    }
-
-    // ファイル監視を開始
-    fileWatcher = fs.watch(filePath, {
-        presistent: false,
-        recursive: false
-    }, (type, filename) => {
-        if (type === 'change') {
-            openFile(filePath)
-        }
-    })
-}
-
-function openFile(filePath) {
-    let content = fs.readFileSync(filePath);
-    mainWindow.webContents.send('changeImage', content)
-}
-
-function createLicensesWindow() {
-    // ライセンスウィンドウ作成
-    licensesWindow = new BrowserWindow()
-    const licensesMenu = Menu.buildFromTemplate([])
-    licensesWindow.setMenu(null)
-
-    // licenses.html ロード
-    licensesWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'licenses.html'),
-      protocol: 'file:',
-      slashes: true
-    }))
-
-    // ウィンドウが閉じたときに、グローバル変数を掃除する
-    licensesWindow.on('closed', () => {
-      licensesWindow = null
-    })
 }
 
 Main.main()

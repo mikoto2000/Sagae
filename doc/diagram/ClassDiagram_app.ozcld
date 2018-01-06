@@ -1,16 +1,23 @@
 classdiagram Sagae {
     class Main {
     ==
-        "- final mainMenuTemplate";
+        "- mainWindow";
+        "- fileWatcher";
+        "- licensesWindow";
+        "- firstOpenFilePath";
     ==
         "+ constructor()";
-        "- onActivate()";
-        "- onWindowClosed()";
-        "- onWindowAllClosed()";
-        "- createWindow()";
-        "- chooseFileAndOpen()";
-        "- openFile(filePath : string)";
+        "+ openDevToolInMainWindow()";
+        "+ createLicensesWindow()";
         "+ static main()";
+        "+ static printUsageAndExit()";
+        "- createMainWindow()";
+        "- onActivate()";
+        "- onMainWindowClose()";
+        "- openArgFile()";
+        "- chooseFileAndOpenAndWatch()";
+        "- openAndWatch(filePath)";
+        "- openFile(filePath : string)";
     }
 
     class Sagae {
