@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "CommonJS",
         "target": "ES3",
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "experimentalDecorators": false,
         "sourceMap": false,
         "declaration": false,

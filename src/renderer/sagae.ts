@@ -2,7 +2,7 @@ const {ipcRenderer} = require('electron')
 const remote = require('electron').remote
 
 window.addEventListener('load', function() {
-    ipcRenderer.on('changeImage', function (event, content) {
+    ipcRenderer.on('changeImage', function (event: string, content: string) {
 
         // メッセージリセット
         setMessage("")
@@ -32,12 +32,12 @@ window.addEventListener('load', function() {
         win.setContentSize(applicationArea.clientWidth, applicationArea.clientHeight)
     });
 
-    ipcRenderer.on('changeMessage', function (event, message) {
+    ipcRenderer.on('changeMessage', function (event: string, message: string) {
         setMessage(message)
     });
 });
 
-function setMessage(message) {
+function setMessage(message: string) {
     // メッセージを更新
     let target = document.getElementById("message");
     target.textContent = message

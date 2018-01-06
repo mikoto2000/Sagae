@@ -1,3 +1,10 @@
+// node 標準のものは、 FSWatch を export していないので自前定義
+declare interface FSWatcher {
+    close(): void;
+}
+
+type BrowserWindow = Electron.BrowserWindow
+
 // 必要になるモジュール群を読み込む
 const {app, dialog, Menu, BrowserWindow} = require('electron')
 const path = require('path')
@@ -7,12 +14,12 @@ const program = require('commander')
 
 class Main {
 
-    private mainWindow
-    private fileWatcher
-    private licensesWindow
-    private firstOpenFilePath
+    private mainWindow: BrowserWindow
+    private fileWatcher: FSWatcher
+    private licensesWindow: BrowserWindow
+    private firstOpenFilePath: string
 
-    public constructor(firstOpenFilePath) {
+    public constructor(firstOpenFilePath: string) {
 
         this.firstOpenFilePath = firstOpenFilePath
 
@@ -110,7 +117,7 @@ class Main {
         this.openAndWatch(filePath)
     }
 
-    private openAndWatch(filePath) {
+    private openAndWatch(filePath: string) {
         // ファイルを開く
         this.openFile(filePath)
 
@@ -121,16 +128,17 @@ class Main {
 
         // ファイル監視を開始
         this.fileWatcher = fs.watch(filePath, {
-            presistent: false,
-            recursive: false
-        }, (type, filename) => {
+            persistent: false,
+            recursive: false,
+            encoding: 'UTF-8'
+        }, (type: string, filename: string) => {
             if (type === 'change') {
                 this.openFile(filePath)
             }
         })
     }
 
-    private openFile(filePath) {
+    private openFile(filePath: string) {
         let content = fs.readFileSync(filePath);
         this.mainWindow.webContents.send('changeImage', content)
     }
@@ -214,7 +222,7 @@ class Main {
     }
 
     // Usage を出力して終了
-    private static printUsageAndExit(usage) {
+    private static printUsageAndExit(usage: string) {
         console.log(usage)
         process.exit(1)
     }
