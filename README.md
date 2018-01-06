@@ -21,9 +21,7 @@ Build:
 ### Release:
 
 ```sh
-> convert -background none .\resource\icon.svg -define icon:auto-resize .\resource\icon.ico
-> docker-compose run --rm typescript tsc -p ./
-> docker-compose run --rm electron electron-packager . sagae --platform=win32 --arch=x64 --electron-version=1.7.9 --overwrite --icon=./resource/icon.ico
+> npm run release
 ```
 
 License:
