@@ -5,10 +5,34 @@ const url = require('url')
 const fs = require('fs')
 const program = require('commander')
 
+class Main {
+    public static main() {
+        // パッケージ化したアプリのために、ダミーの引数を挿入する
+        if (!process.defaultApp) {
+            process.argv.splice(1, 0, ".")
+        }
+
+        // コマンドライン引数解析
+        program.version('1.0.0')
+            .usage('[options] FILE')
+            .parse(process.argv)
+
+        if (program.args[0]) {
+            firstOpenFilePath = path.resolve(program.args[0])
+        }
+
+        // 引数の数判定
+        if (program.args.length > 1) {
+            program.outputHelp(printUsageAndExit)
+        }
+    }
+}
+
 // メインウィンドウはグローバルに持つのが良い
 let mainWindow
 let fileWatcher
 let licensesWindow
+let firstOpenFilePath
 
 // メニュー
 const mainMenuTemplate = [
@@ -40,26 +64,6 @@ const mainMenuTemplate = [
         role: 'quit'
     }
 ]
-
-// パッケージ化したアプリのために、ダミーの引数を挿入する
-if (!process.defaultApp) {
-    process.argv.splice(1, 0, ".")
-}
-
-// コマンドライン引数解析
-program.version('1.0.0')
-    .usage('[options] FILE')
-    .parse(process.argv)
-
-let firstOpenFilePath
-if (program.args[0]) {
-    firstOpenFilePath = path.resolve(program.args[0])
-}
-
-// 引数の数判定
-if (program.args.length > 1) {
-    program.outputHelp(printUsageAndExit)
-}
 
 // Usage を出力して終了
 function printUsageAndExit(usage) {
@@ -187,3 +191,6 @@ function createLicensesWindow() {
       licensesWindow = null
     })
 }
+
+Main.main()
+
