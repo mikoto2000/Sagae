@@ -1,0 +1,9 @@
+doc/**/*.dot
+doc/**/*.svg
+node_modules/
+resource/*.ico
+sagae-win32-x64/
+src/**/*.d.ts
+src/**/*.js
+src/**/*.js.map
+
