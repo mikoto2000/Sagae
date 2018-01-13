@@ -9,12 +9,13 @@ classdiagram Sagae {
     class Container {
         stereotype: abstract;
     ==
-        "- children: Primitive[]";
+        "- children: SvgElement[]";
     ==
-        "+ getChildren(): Primitive[]";
-        "+ add(primitive: Primitive)";
-        "+ remove(primitive: Primitive)";
-        "+ insertBefor(insertPrimitive: Primitive, referencePrimitive: Primitive)";
+        "+ querySelector(selectors: string): SvgElement";
+        "+ querySelectorAll(selectors: string): SvgElement[]";
+        "+ add(primitive: SvgElement)";
+        "+ remove(primitive: SvgElement)";
+        "+ insertBefor(insertSvgElement: SvgElement, referenceSvgElement: SvgElement)";
     }
 
     class Svg {
