@@ -15,6 +15,10 @@ window.addEventListener('load', function() {
         // content をパース
         let svgDom = new DOMParser().parseFromString(content, 'application/xml');
 
+        // SVG のサイズ取得
+        let width:string | null = svgDom.documentElement.getAttribute("width")
+        let height:string | null = svgDom.documentElement.getAttribute("height")
+
         // 古い画像があれば削除する
         let target: HTMLElement = document.getElementById("svg") as HTMLElement
         let child: Node | null = target.firstChild
@@ -24,23 +28,15 @@ window.addEventListener('load', function() {
         }
 
         // エレメント挿入
+        if (width) {
+            target.setAttribute("width", width)
+        }
+        if (height) {
+            target.setAttribute("height", height)
+        }
         target.appendChild(document.importNode(svgDom.documentElement, true));
 
-        // SVG のサイズ取得
-        let bbox = (target.firstChild as SVGElement).getBBox()
-        let width: number | null = bbox.width
-        let height: number | null = bbox.height
-
-        if (width) {
-            target.setAttribute("width", width.toString(10))
-        }
-
-        if (height) {
-            target.setAttribute("height", height.toString(10))
-        }
-
         let win = remote.getCurrentWindow()
-
         if (win) {
             let applicationArea: HTMLElement = document.getElementById('application') as HTMLElement
             win.setContentSize(applicationArea.clientWidth, applicationArea.clientHeight)
