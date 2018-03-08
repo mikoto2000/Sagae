@@ -16,8 +16,8 @@
     "build:doc:SvgElement": "ozcld -o doc/diagram/ClassDiagram_SvgElement.dot doc/diagram/ClassDiagram_SvgElement.ozcld & dot -Tsvg doc/diagram/ClassDiagram_SvgElement.dot -o doc/diagram/ClassDiagram_SvgElement.svg",
     "build:doc:app": "ozcld -o doc/diagram/ClassDiagram_app.dot doc/diagram/ClassDiagram_app.ozcld & dot -Tsvg doc/diagram/ClassDiagram_app.dot -o doc/diagram/ClassDiagram_app.svg",
     "clean": "npm-run-all clean:build clean:package",
-    "clean:build": "docker-compose run --rm typescript bash -c \"rm -rf src/**/*.js\" & exit 0",
-    "clean:package": "docker-compose run --rm electron rm -rf dist sagae-win32-x64 sagae-win32-x64.zip & exit 0",
+    "clean:build": "bash -c \"rm -rf src/**/*.js\" & exit 0",
+    "clean:package": "bash -c \"rm -rf dist sagae-win32-x64 sagae-win32-x64.zip\" & exit 0",
     "run": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:arg": "electron . ./resource/icon.svg"
