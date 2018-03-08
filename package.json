@@ -8,7 +8,7 @@
   },
   "scripts": {
     "release": "npm-run-all build package",
-    "package": "docker-compose run --rm electron electron-packager . sagae --platform=win32 --arch=x64 --electron-version=1.8.2 --overwrite --icon=./resource/icon.ico --ignore=\"doc|.*\\.ts|tsconfig\\.json|icon\\.svg\"",
+    "package": "electron-packager . sagae --platform=win32 --arch=x64 --electron-version=1.8.2 --overwrite --icon=./resource/icon.ico --ignore=\"doc|.*\\.ts|tsconfig\\.json|icon\\.svg\"",
     "build": "npm-run-all build:icon build:compile",
     "build:icon": "magick -background none ./resource/icon.svg -define icon:auto-resize ./resource/icon.ico",
     "build:compile": "tsc -p ./",
@@ -40,6 +40,8 @@
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
+    "electron": "^1.8.3",
+    "electron-packager": "^11.1.0",
     "npm-run-all": "^4.1.2",
     "typescript": "2.6.2"
   }
