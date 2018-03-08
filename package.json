@@ -8,7 +8,7 @@
   },
   "scripts": {
     "release": "npm-run-all build package",
-    "package": "docker-compose run --rm electron electron-packager . sagae --platform=win32 --arch=x64 --electron-version=1.7.9 --overwrite --icon=./resource/icon.ico --ignore=\"doc|.*\\.ts|tsconfig\\.json|icon\\.svg\"",
+    "package": "docker-compose run --rm electron electron-packager . sagae --platform=win32 --arch=x64 --electron-version=1.8.2 --overwrite --icon=./resource/icon.ico --ignore=\"doc|.*\\.ts|tsconfig\\.json|icon\\.svg\"",
     "build": "npm-run-all build:icon build:compile",
     "build:icon": "magick -background none ./resource/icon.svg -define icon:auto-resize ./resource/icon.ico",
     "build:compile": "docker-compose run --rm typescript tsc -p ./",
